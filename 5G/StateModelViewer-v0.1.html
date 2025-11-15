@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<title>State Model Viewer of 5GSPE</title>
+		<script src=
+			"https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js">
+		</script>
+		<script src=
+			"https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js">
+		</script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+		<link rel="stylesheet" href=
+			"https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css">
+		<link rel="stylesheet"
+			type="text/css" href=
+			"https://use.fontawesome.com/releases/v5.6.3/css/all.css">
+
+		<link rel="stylesheet"
+			type="text/css" href=
+			"toggle_switch.css">
+
+		<script type="text/javascript">
+			function showHideRow(row, cb, sec) {
+				$("#" + row).toggle();
+				$("#" + cb).toggle();
+				$("#" + sec).toggle();
+			}
+
+			$(window).on('load', function () {
+			    $('body').append('<div id="loadingDiv"><div class="loader"> <p style="margin-top:180px; padding:10px; color:red; font-size:90px;" >Loading... </p></div></div>'); //link: https://stackoverflow.com/questions/1853662/how-to-show-page-loading-div-until-the-page-has-finished-loading
+				setTimeout(removeLoader, 1000); //wait for page load PLUS two seconds.
+			  }) 
+
+			function showHideCondRow(row, cb) {
+				$("#" + row).toggle();
+				$("#" + cb).toggle();
+				$("." + row).toggle();
+			}
+
+			
+			function removeLoader(){
+			    $( "#loadingDiv" ).fadeOut(500, function() {
+			      // fadeOut complete. Remove the loading div
+			      $( "#loadingDiv" ).remove(); //makes page more lightweight 
+			      $('#control_details').show();
+			      $('#model_view').show();
+			  });  
+			}
+		</script>
+
+		<style>
+
+
+			/* 
+			path.link {
+	          fill: none;
+	          stroke: #666;
+	          stroke-width: 1.5px;
+	        }
+
+	        circle {
+	          fill: #ccc;
+	          stroke: #fff;
+	          stroke-width: 2.5px; //1.5px
+	        }
+
+	        text {
+	          fill: #000;
+	          font: 20px sans-serif; //10 px
+	          pointer-events: none;
+	        }*/
+
+			body {
+				margin: 0 auto;
+				padding: 0px;
+				width: 100%;
+				font-family: "Myriad Pro",
+					"Helvetica Neue", Helvetica,
+					Arial, Sans-Serif;
+			}
+
+			.float-container {
+			    width: 100%;
+			    height: 100%;
+			}
+			.div1{
+				width: 60%;
+				height: 100%;
+				float: left;
+				}
+
+			.div2{
+				width: 40%;
+				height: 100%;
+				margin-left: 60%;
+				padding: 50px;
+				}
+
+			#wrapper {
+				margin-bottom: 100px;
+				padding: 50px;
+/*				text-align: center;*/
+/*				width: 1400px;*/
+
+			}
+
+			h1{
+				margin-top: -5px;
+				font-size: 45px;
+				text-align: center;
+				color: #585858;
+			}
+
+			
+
+			#table_detail {
+/*				width: 900px;*/
+				text-align: left;
+				border-collapse: collapse;
+				color: #2E2E2E;
+				border: #A4A4A4;
+				margin-bottom: 10px;
+			}
+
+			#table_detail tr:hover {
+				background-color: #F2F2F2;
+			}
+
+			.hidden_row {
+				display: none;
+			}
+
+
+			
+
+
+		.loader,
+        .loader:after {
+            border-radius: 100%;
+            width: 10em;
+            height: 10em;
+        }
+        .loader {            
+            border: 40px solid #f3f3f3; /* Light grey */
+			  border-top: 40px solid #3498db; /* Blue */
+			  border-radius: 100%;
+			  width: 500px;
+			  height: 500px;
+			  animation: spin 2s linear infinite;
+        }
+        
+        @keyframes load8 {
+            0% {
+                -webkit-transform: rotate(0deg);
+                transform: rotate(0deg);
+            }
+            100% {
+                -webkit-transform: rotate(360deg);
+                transform: rotate(360deg);
+            }
+        }
+        #loadingDiv {
+        	position:absolute;;
+            top:0;
+            left:0;
+            width:100%;
+            height:100%;
+            background-color:#020;
+            opacity: 0.5;
+        }
+
+
+
+
+		</style>
+	</head>
+
+	<body>
+		<div class="float-container">
+		
+			<div id="wrapper" class="div1">
+
+				<h1 align="center"> State Model Viewer of 5GSPE</h1>
+
+				<h3>Breached security control(s): </h3> 
+				<p>This list of controls are resulted from the existing auditing (e.g., KubeScape, Nmap, OpenVAS, etc.) solution which are reported as breached. Please click on a control to view the details</p>
+
+
+				<table border=1 id="table_detail"
+					align=center cellpadding=10>
+
+					<tr>
+						<th>ID</th>
+						<th>Title</th>
+						<th>Description</th>
+					</tr>
+
+
+					<tr onclick="showHideRow('hidden_row2', 'id_cb_cntrl_2');">
+						<td>AC-7</td>
+						<td>Unsuccessful Logon Attempts</td>
+						<td>Enforce a limit of consecutive invalid logon attempts by a user during an organization-defined time period and automatically lock the account or node for an organization-defined time period; delay next logon prompt per; notify system administrator; etc.</td>
+					</tr>
+					<tr id="hidden_row2" class="hidden_row">
+						<td colspan=4>
+							<b>Detail Description:</b>: The need to limit unsuccessful logon attempts and take subsequent action when the maximum number of attempts is exceeded applies regardless of whether the logon occurs via a local or network connection. Due to the potential for denial of service, automatic lockouts initiated by systems are usually temporary and automatically release after a predetermined, organization-defined time period. If a delay algorithm is selected, organizations may employ different algorithms for different components of the system based on the capabilities of those components. Responses to unsuccessful logon attempts may be implemented at the operating system and the application levels. Organization-defined actions that may be taken when the number of allowed consecutive invalid logon attempts is exceeded include prompting the user to answer a secret question in addition to the username and password, invoking a lockdown mode with limited user capabilities (instead of full lockout), allowing users to only logon from specified Internet Protocol (IP) addresses, requiring a CAPTCHA to prevent automated attacks, or applying user profiles such as location, time of day, IP address, device, or Media Access Control (MAC) address. If automatic system lockout or execution of a delay algorithm is not implemented in support of the availability objective, organizations consider a combination of other actions to help prevent brute force attacks. In addition to the above, organizations can prompt users to respond to a secret question before the number of allowed unsuccessful logon attempts is exceeded. Automatically unlocking an account after a specified period of time is generally not permitted. However, exceptions may be required based on operational mission or need.
+						</td>
+					</tr>
+
+					<!-- <tr onclick="showHideRow('hidden_row3', 'id_cb_cntrl_3', 'div1');">
+						<td><input type="checkbox" id="id_cb_cntrl_3" checked class="hidden_row"/>&nbsp;</td>
+						<td>CM-7</td>
+						<td>Periodic Review</td>
+						<td>Review the system to identify unnecessary and/or nonsecure functions, ports, protocols, software, and services</td>
+					</tr>
+					<tr id="hidden_row3" class="hidden_row">
+						<td colspan=4>
+							<b>Details with Keywords</b>: Organizations review functions, ports, protocols, and services provided by systems or system components to determine the functions and services that are candidates for elimination. Such reviews are especially important during transition periods from older technologies to newer technologies (e.g., transition from IPv4 to IPv6). These technology transitions may require implementing the older and newer technologies simultaneously during the transition period and returning to minimum essential functions, ports, protocols, and services at the earliest opportunity. Organizations can either decide the relative security of the function, port, protocol, and/or service or base the security decision on the assessment of other entities. Unsecure protocols include Bluetooth, FTP, and peer-to-peer networking.
+						</td>
+					</tr> -->
+
+				</table>
+
+				<br>
+
+				<div id="control_details" class="hidden_row">
+					<h3> Exctracted Keywords: </h3>
+					<fieldset class="multiswitch" style="margin-left: 300px; margin-top: -38px;"> 
+					  <div class="slide-container">
+					    <input type="radio" name="kw" id="id_rb_top5kw" checked onclick="showHideCondRow('tr_top_5', 'tr_top_10');">
+					    <label for="id_rb_top5kw">Top 5</label>
+					    <input type="radio" name="kw" id="id_rb_top10kw" onclick="showHideCondRow('tr_top_5', 'tr_top_10');">
+					    <label for="id_rb_top10kw">Top 10</label>
+					    <!-- leave this "slide" -->
+					    <a class="slide" aria-hidden="true"></a>
+					  </div>
+					</fieldset>
+					
+					<p style="margin-top: -40px;">This list of keywords are automatically extracted using the help of Natural Language Processing (NLP) tools (e.g., spacy, textrank, etc.) from the description of the specific control from NIST-800-53. The ranking of the keywords is also provided by the NLP tools.</p> 
+
+					<table border=2 id="table_detail" cellpadding=5>
+						<tr id="tr_top_5">
+							<td> logon, invalid logon, system administarator, unauthorized logon,  systems</th>
+						</tr>
+						<tr id="tr_top_10" class="hidden_row">
+							<td> logon, invalid logon, system administarator, unauthorized logon,  systems, lockouts, organization, unsuccessful, organization, attempts</th>
+						</tr>
+					</table>
+
+					<br>
+
+					<h3 style="display: inline-block;"> Suggested pre-condition(s) of the breached control: </h3>
+					<button  onclick="alert('This button action will be added later.');">Check Others</button>
+					<button onclick="showHideCondRow('pre_cond_rest_hidden', 'id_pre_cond_own_inp_filed');">Add Yours</button>
+
+					<!-- <fieldset class="multiswitch" style="margin-left: 680px; margin-top: -38px;"> 
+					  <div class="slide-container">
+					    <input type="radio" name="pre_cond" id="id_rb_pre_cond_check_other" >
+					    <label for="id_rb_pre_cond_check_other">Check Others</label>
+					    <input type="radio" name="pre_cond" id="id_rb_pre_cond_input_own">
+					    <label for="id_rb_pre_cond_input_own">Add Yours</label>
+					    
+					    <a class="slide" aria-hidden="true"></a>
+					  </div>
+					</fieldset> -->
+
+
+					<p>The pre-conditions of the individual breached security control are automatically generated using NLP tools using the extracted keywords above and MITRE ATT&CK framework. To see the details of individual precondition please click on it. You can also check the other suggested pre-conditoins extracted by the tool by clicking on "Chceck Others" button.  You can select one or mutiple pre-condition(s) by clicking on it. If you can not find the relevant precondition(s) you can input your own by clicking on the "Add Yours" button.
+					</p>
+
+					
+
+
+					<table border=1 id="table_detail" align=center cellpadding=5 class="pre_cond_rest_hidden">
+
+						<tr>
+							<th>Is Selected</th>
+							<th>ID</th>
+							<th>Title</th>
+							<th>Description</th>
+						</tr>
+
+						<tr onclick="showHideCondRow('pre_cond_hidden_row1', 'id_cb_T1134');">
+							<td><input type="checkbox" id="id_cb_T1134" checked/>&nbsp;</td>
+							<td>T1134</td>
+							<td>Access Token Manipulation</td>
+							<td>Adversaries may modify access tokens to operate under a different user or system security context to perform actions and bypass access controls</td>
+						</tr>
+						<tr id="pre_cond_hidden_row1">
+							<td colspan=4>
+								<b>Detail Description</b>: Adversaries may modify access tokens to operate under a different user or system security context to perform actions and bypass access controls. Windows uses access tokens to determine the ownership of a running process. A user can manipulate access tokens to make a running process appear as though it is the child of a different process or belongs to someone other than the user that started the process. When this occurs, the process also takes on the security context associated with the new token.
+								<br>
+								An adversary can use built-in Windows API functions to copy access tokens from existing processes; this is known as token stealing. These token can then be applied to an existing process (i.e. [Token Impersonation/Theft](https://attack.mitre.org/techniques/T1134/001)) or used to spawn a new process (i.e. [Create Process with Token](https://attack.mitre.org/techniques/T1134/002)). An adversary must already be in a privileged user context (i.e. administrator) to steal a token. However, adversaries commonly use token stealing to elevate their security context from the administrator level to the SYSTEM level. An adversary can then use a token to authenticate to a remote system as the account for that token if the account has appropriate permissions on the remote system.(Citation: Pentestlab Token Manipulation)
+
+								<br>
+								Any standard user can use the <code>runas</code> command, and the Windows API functions, to create impersonation tokens; it does not require access to an administrator account. There are also other mechanisms, such as Active Directory fields, that can be used to modify access tokens.
+								<br>
+
+							</td>
+						</tr>
+						<!-- <div id="pre_cond_rest_hidden" class="hidden_row">	
+							<tr onclick="showHideCondRow('pre_cond_hidden_row2', 'id_cb_T1110');">
+								<td><input type="checkbox" id="id_cb_T1110" checked class="hidden_row"/>&nbsp;</td>
+								<td>T1110.002</td>
+								<td>Brute Force: Password Cracking</td>
+								<td>Adversaries may use password cracking to attempt to recover usable credentials, such as plaintext passwords, when credential material such as password hashes are obtained.</td>
+							</tr>
+							<tr id="pre_cond_hidden_row2" class="hidden_row">
+								<td colspan=4>
+									<b>Detail Description</b>: Adversaries may use password cracking to attempt to recover usable credentials, such as plaintext passwords, when credential material such as password hashes are obtained. [OS Credential Dumping](https://attack.mitre.org/techniques/T1003) can be used to obtain password hashes, this may only get an adversary so far when [Pass the Hash](https://attack.mitre.org/techniques/T1550/002) is not an option. Further,  adversaries may leverage [Data from Configuration Repository](https://attack.mitre.org/techniques/T1602) in order to obtain hashed credentials for network devices.(Citation: US-CERT-TA18-106A) <br><br>
+
+									Techniques to systematically guess the passwords used to compute hashes are available, or the adversary may use a pre-computed rainbow table to crack hashes. Cracking hashes is usually done on adversary-controlled systems outside of the target network.(Citation: Wikipedia Password cracking) The resulting plaintext password resulting from a successfully cracked hash may be used to log into systems, resources, and services in which the account has access.
+								</td>
+							</tr>
+
+							<tr onclick="showHideCondRow('pre_cond_hidden_row3', 'id_cb_T1567');">
+								<td><input type="checkbox" id="id_cb_T1567" checked class="hidden_row"/>&nbsp;</td>
+								<td>T1567</td>
+								<td>Exfiltration Over Web Service: Exfiltration to Cloud Storage</td>
+								<td>Adversaries may use an existing, legitimate external Web service to exfiltrate data rather than their primary command and control channel.</td>
+							</tr>
+							<tr id="pre_cond_hidden_row3" class="hidden_row">
+								<td colspan=4>
+									<b>Detail Description</b>: Adversaries may use an existing, legitimate external Web service to exfiltrate data rather than their primary command and control channel. Popular Web services acting as an exfiltration mechanism may give a significant amount of cover due to the likelihood that hosts within a network are already communicating with them prior to compromise. Firewall rules may also already exist to permit traffic to these services.
+
+									<br>Web service providers also commonly use SSL/TLS encryption, giving adversaries an added level of protection.
+								</td>
+							</tr>
+
+						</div> -->
+					</table>
+
+					<div class="hidden_row" id="id_pre_cond_own_inp_filed">
+						<label for="id_pre_cond_title" title="This is a two to five words title in the format of controlId_EffectsOfBreach"><b>Pre-Condition Title:</b></label><br>
+						<textarea cols="127" rows="2" id="id_pre_cond_title"  maxlength="50" placeholder="This is a two to five words title in the format of controlId_CauseOfBreach"></textarea><br>
+
+
+						<label for="id_post_cond_desc" title="Describe the logic for selecting this post-condition of the breached security control within 250 words"><b>Pre-Condition Description:</b></label> <br>
+						<textarea cols="127" rows="10" id="id_pre_cond_desc"  maxlength="250" placeholder="Describe the logic for selecting this pre-condition of the breached security control within 250 words"></textarea><br>
+
+						<button  onclick="addMorePost()">Add more</button>
+						<button  onclick="donePost()">Done</button>
+					</div>
+
+
+
+					
+
+					<br>
+					<h3 style="display: inline-block;"> Suggested post-condition(s) of the breached control: </h3>
+					<button  onclick="alert('This button action will be added later.');">Check Others</button>
+					<button onclick="showHideCondRow('post_cond_rest_hidden', 'id_post_cond_own_inp_filed');">Add Yours</button>
+
+
+					<p>The post-conditions of the individual breached security control are also automatically generated using NLP tools using the extracted keywords above and MITRE ATT&CK framework. To see the details of individual post-condition please click on it. You can also check the other suggested post-conditoins extracted by the tool by clicking on "Chceck Others" button.  You can select one or mutiple pre-condition(s) by clicking on it. If you can not find the relevant precondition(s) you can input your own by clicking on the "Add Yours" button.
+					</p>
+
+					<table border=1 id="table_detail" align=center cellpadding=5 class="post_cond_rest_hidden">
+
+						<tr>
+							<th>Is Selected</th>
+							<th>ID</th>
+							<th>Title</th>
+							<th>Description</th>
+						</tr>
+
+						<tr onclick="showHideCondRow('post_cond_hidden_row1', 'id_cb_T011');">
+							<td><input type="checkbox" id="id_cb_T011" checked/>&nbsp;</td>
+							<td>T1556</td>
+							<td>Modify Authentication Process</td>
+							<td>Adversaries may modify authentication mechanisms and processes to access user credentials or enable otherwise unwarranted access to accounts.</td>
+						</tr>
+						<tr id="post_cond_hidden_row1">
+							<td colspan=4>
+								<b>Detail Description</b>: Adversaries may modify authentication mechanisms and processes to access user credentials or enable otherwise unwarranted access to accounts. The authentication process is handled by mechanisms, such as the Local Security Authentication Server (LSASS) process and the Security Accounts Manager (SAM) on Windows, pluggable authentication modules (PAM) on Unix-based systems, and authorization plugins on MacOS systems, responsible for gathering, storing, and validating credentials. By modifying an authentication process, an adversary may be able to authenticate to a service or system without using [Valid Accounts](https://attack.mitre.org/techniques/T1078).
+								<br>
+								Adversaries may maliciously modify a part of this process to either reveal credentials or bypass authentication mechanisms. Compromised credentials or access may be used to bypass access controls placed on various resources on systems within the network and may even be used for persistent access to remote systems and externally available services, such as VPNs, Outlook Web Access and remote desktop.
+								<br>
+
+							</td>
+						</tr>
+
+						<!-- <tr onclick="showHideCondRow('post_cond_hidden_row2', 'id_cb_T111');">
+							<td><input type="checkbox" id="id_cb_T111" checked class="hidden_row"/>&nbsp;</td>
+							<td>T111</td>
+							<td>Brute Force: Password Cracking</td>
+							<td>Adversaries may use password cracking to attempt to recover usable credentials, such as plaintext passwords, when credential material such as password hashes are obtained.</td>
+						</tr>
+						<tr id="post_cond_hidden_row2" class="hidden_row">
+							<td colspan=4>
+								<b>Detail Description</b>: Adversaries may use password cracking to attempt to recover usable credentials, such as plaintext passwords, when credential material such as password hashes are obtained. [OS Credential Dumping](https://attack.mitre.org/techniques/T1003) can be used to obtain password hashes, this may only get an adversary so far when [Pass the Hash](https://attack.mitre.org/techniques/T1550/002) is not an option. Further,  adversaries may leverage [Data from Configuration Repository](https://attack.mitre.org/techniques/T1602) in order to obtain hashed credentials for network devices.(Citation: US-CERT-TA18-106A) <br><br>
+
+								Techniques to systematically guess the passwords used to compute hashes are available, or the adversary may use a pre-computed rainbow table to crack hashes. Cracking hashes is usually done on adversary-controlled systems outside of the target network.(Citation: Wikipedia Password cracking) The resulting plaintext password resulting from a successfully cracked hash may be used to log into systems, resources, and services in which the account has access.
+							</td>
+						</tr>
+
+						<tr onclick="showHideCondRow('post_cond_hidden_row3', 'id_cb_T156');">
+							<td><input type="checkbox" id="id_cb_T156" checked class="hidden_row"/>&nbsp;</td>
+							<td>T156</td>
+							<td>Exfiltration Over Web Service: Exfiltration to Cloud Storage</td>
+							<td>Adversaries may use an existing, legitimate external Web service to exfiltrate data rather than their primary command and control channel.</td>
+						</tr>
+						<tr id="post_cond_hidden_row3" class="hidden_row">
+							<td colspan=4>
+								<b>Detail Description</b>: Adversaries may use an existing, legitimate external Web service to exfiltrate data rather than their primary command and control channel. Popular Web services acting as an exfiltration mechanism may give a significant amount of cover due to the likelihood that hosts within a network are already communicating with them prior to compromise. Firewall rules may also already exist to permit traffic to these services.
+
+								<br>Web service providers also commonly use SSL/TLS encryption, giving adversaries an added level of protection.
+							</td>
+						</tr> -->
+
+					</table>
+
+					<div class="hidden_row" id="id_post_cond_own_inp_filed">
+						<label for="id_post_cond_title" title="This is a two to five words title in the format of controlId_EffectsOfBreach"><b>Post-Condition Title:</b></label><br>
+						<textarea cols="127" rows="2" id="id_post_cond_title"  maxlength="50" placeholder="This is a two to five words title in the format of controlId_EffectsOfBreach"></textarea><br>
+
+
+						<label for="id_post_cond_desc" title="Describe the logic for selecting this post-condition of the breached security control within 250 words"><b>Post-Condition Description:</b></label> <br>
+						<textarea cols="127" rows="10" id="id_post_cond_desc"  maxlength="250" placeholder="Describe the logic for selecting this post-condition of the breached security control within 250 words"></textarea><br>
+						
+
+						<button  onclick="addMorePost()">Add more</button>
+						<button  onclick="donePost()">Done</button>
+					</div>
+				</div>
+
+				<br>
+				<button align="center" onclick="alert('This button action will be added later.');">Save the model</button>	
+			</div>
+
+			<div class="div2 hidden_row" id="model_view">
+	            <h1 align="center"> Generated State Model</h1>
+		        <h3>For selected control: </h3>
+		        <img src="partial_graph.png" align="center" width="400" height="100">
+
+		        <h3>Full model: </h3>
+
+		        <img src="combined_g.jpg" align="center" width="500" height="600">
+		    </div>
+		</div>
+	</body>
+
+</html>

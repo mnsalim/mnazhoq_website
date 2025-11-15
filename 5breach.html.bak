@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Event-State Model Builder</title>
+        <link href="https://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.5.2/solar/bootstrap.min.css">
+        <link href="/display-content-dropdown-selection/ui/css/demo.css" rel="stylesheet" type="text/css" media="all">
+        <link href="/display-content-dropdown-selection/dist/jquery-dm-select-show.css" rel="stylesheet" type="text/css" media="all">
+
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="/display-content-dropdown-selection/dist/jquery-dm-select-show.min.js"></script>
+        <script src="/display-content-dropdown-selection/ui/js/demo.js"></script>
+        <style>
+            .container { margin: 150px auto; }
+        </style>
+    </head>
+
+    <body>
+		<main class="container">
+			
+		<h2>Inputs for identifying the pre and post condition of a breach</h2>
+
+		<p>To generate the event-state model we need to identify the pre-condition and post-condition of a breach.</p>
+
+		<ol>
+		  <li>Find the breach: Using existing auditing and monitoring tools first find the security policy breach</li>
+		  <li>Identify the pre-condition of a breach</li>
+			<ol>
+			  <li>Go to https://fight.mitre.org/ or https://attack.mitre.org/ website</li>
+			  <li>Identify the tactics and techniques related to the breach (you can use the search button in the website also)</li>
+			  <li>Rank them and select the most appropriate one</li>
+			  <li>Additionally, search in the https://d3fend.mitre.org/ website to find out the specific defense mechanism and then check for relevant techniques listed there</li>
+			</ol>
+		  <li>Identify the post-condition of the breach</li>
+			<ol>
+			  <li>Using the description of the specific techniques and sub techniques, especially the procedure examples one can find the post condition of the breach</li>
+			</ol>
+		</ol> 
+
+		<form action="#">
+		  <label for="controls"><b>Choose a breached security control:</b></label>
+		  <select id="controls" name="controls" >
+			<option value="cntrl_1">AC-7: Unsuccessful Logon Attempts</option>
+			<option value="cntrl_2">CM-7: Least Functionality</option>
+			<option value="cntrl_3">SI-4(2, 7): System Monitoring | Automated Tools and Mechanisms for Real-time Analysis </option>
+		  </select><br><br>
+		  
+		  <label for="fname" title="This is a two to five words title in the format of controlId_CauseOfBreach"><b>Pre-Condition Title:</b></label><br>
+		  <p >This is a two to five words title in the format of "controlId_CauseOfBreach"</p>
+		  <input type="text" ><br><br>
+		  <label for="fname"><b>Pre-Condition Description:</b></label><br>
+		  <p>Describe the logic for selecting this pre-condition of the breached security control within 250 words</p>
+		  <textarea   id="fname" name="fname" cols="50" rows="10"  maxlength="250"> </textarea><br>
+
+		  <label for="fname" title="This is a two to five words title in the format of controlId_EffectsOfBreach"><b>Post-Condition Title:</b></label><br>
+		  <p title="Hello world">This is a two to five words title in the format of "controlId_EffectsOfBreach"</p>
+		  <input type="text" ><br><br>
+		  <label for="lname"><b>Post-Condition Description:</b></label> <br>
+		  <p>Describe the logic for selecting this post-condition of the breached security control within 250 words</p>
+		  <textarea   id="lname" name="lname" cols="50" rows="10"  maxlength="250"> </textarea><br><br>
+
+
+		  <input type="Submit" value="Generate the event-state model">
+		</form>
+		
+		
+        </main>
+		<script type="text/javascript">
+
+		  var _gaq = _gaq || [];
+		  _gaq.push(['_setAccount', 'UA-36251023-1']);
+		  _gaq.push(['_setDomainName', 'jqueryscript.net']);
+		  _gaq.push(['_trackPageview']);
+
+		  (function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		  })();
+
+		</script>
+		<script>
+			try {
+			  fetch(new Request("https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js", { method: 'HEAD', mode: 'no-cors' })).then(function(response) {
+				return true;
+			  }).catch(function(e) {
+				var carbonScript = document.createElement("script");
+				carbonScript.src = "//cdn.carbonads.com/carbon.js?serve=CK7DKKQU&placement=wwwjqueryscriptnet";
+				carbonScript.id = "_carbonads_js";
+				document.getElementById("carbon-block").appendChild(carbonScript);
+			  });
+			} catch (error) {
+			  console.log(error);
+			}												
+		</script>
+	</body>
+</html>
